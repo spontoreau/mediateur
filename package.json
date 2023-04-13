@@ -2,7 +2,9 @@
   "name": "mediateur",
   "version": "0.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
