@@ -1,7 +1,9 @@
 {
   "name": "mediateur",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "A simple and unambitious library to implement the Mediator design pattern",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -9,9 +11,19 @@
     "test": "cucumber-js",
     "test:ci": "cucumber-js --profile ci"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["mediator"],
+  "author": "Sylvain Pontoreau <pontoreau.sylvain@gmail.com>",
   "license": "MIT",
+  "files": [
+    "dist/*",
+    "!/**/*.steps.js",
+    "!/**/*.steps.d.ts",
+    "!/**/*.world.js",
+    "!/**/*.world.d.ts",
+    "!/**/*.world.ts",
+    "!/**/setupTest.js",
+    "!/**/setupTest.d.ts"
+  ],
   "devDependencies": {
     "@cucumber/cucumber": "^9.1.0",
     "@cucumber/pretty-formatter": "^1.0.0",
