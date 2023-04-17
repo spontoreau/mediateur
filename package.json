@@ -9,9 +9,12 @@
     "build": "tsc",
     "pretest": "npm run build",
     "test": "cucumber-js",
-    "test:ci": "cucumber-js --profile ci"
+    "test:ci": "cucumber-js --profile ci",
+    "format": "prettier --write 'src/**/*.{ts,json}'"
   },
-  "keywords": ["mediator"],
+  "keywords": [
+    "mediator"
+  ],
   "author": "Sylvain Pontoreau <pontoreau.sylvain@gmail.com>",
   "license": "MIT",
   "files": [
@@ -30,6 +33,7 @@
     "@types/chai": "^4.3.4",
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",
+    "prettier": "^2.8.7",
     "rimraf": "^5.0.0",
     "typescript": "^5.0.4"
   }
