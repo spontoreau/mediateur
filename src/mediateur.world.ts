@@ -54,4 +54,17 @@ export class MediateurWorld extends World {
     set hasBeenExecuted(value: boolean) {
       this.#hasBeenExecuted = value;
     }
+
+    #error!: Error;
+
+    get error() {
+      if(!this.#error) {
+        throw new Error('Error is not initialized');
+      }
+      return this.#error;
+    }
+
+    set error(value: Error) {
+      this.#error = value;
+    }
 }

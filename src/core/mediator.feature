@@ -22,6 +22,5 @@ Feature: Send a message
 
     Scenario: An unknown message has been sent
       Given a message
-      But no message handler is registered for it
       When sending the message
       Then an error is raised stating that "The message doesn't have any corresponding handler"
