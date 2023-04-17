@@ -1,6 +1,6 @@
 import { World } from "@cucumber/cucumber";
 import { Message } from "./core/message";
-import { Handler } from "./core/messageHandler";
+import { MessageHandler } from "./core/messageHandler";
 
 export class MediateurWorld extends World {
     #messageType!: symbol;
@@ -29,7 +29,7 @@ export class MediateurWorld extends World {
       this.#message = value;
     }
 
-    #handler!:Handler;
+    #handler!:MessageHandler;
 
     get handler() {
       if(!this.#handler) {
@@ -38,7 +38,7 @@ export class MediateurWorld extends World {
       return this.#handler;
     }
 
-    set handler(value: Handler) {
+    set handler(value: MessageHandler) {
       this.#handler = value;
     }
 

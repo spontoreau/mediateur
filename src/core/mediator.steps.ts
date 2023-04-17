@@ -1,6 +1,6 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { MediateurWorld } from "../mediateur.world";
-import { mediator } from "./mediator";
+import { getHandler, mediator } from "./mediator";
 import { UnknownMessageError } from "./unknownMessage.error";
 
 Given('a message', function (this: MediateurWorld) {
@@ -42,7 +42,7 @@ When('sending the message', async function (this: MediateurWorld) {
 });
 
 Then('the message handler is available in the handler registry', function (this: MediateurWorld) {
-  const actual = mediator.getHandler(this.messageType);
+  const actual = getHandler(this.messageType);
 
   actual.should.be.equal(this.handler);
 });
