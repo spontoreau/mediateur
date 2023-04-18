@@ -12,13 +12,13 @@ Given('a message', function (this: MediateurWorld) {
 });
 
 Given('a message handler', function (this: MediateurWorld) {
-  this.handler = async (message) => {
+  this.handler = async () => {
     return Promise.resolve();
   };
 });
 
 Given('a registred message handler', function (this: MediateurWorld) {
-  this.handler = async (message) => {
+  this.handler = async () => {
     this.hasBeenExecuted = true;
     return Promise.resolve();
   };
