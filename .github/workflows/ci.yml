@@ -1,0 +1,10 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  call-shared-workflow:
+    uses: ./.github/workflows/shared-workflow.yml

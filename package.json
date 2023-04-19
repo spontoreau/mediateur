@@ -9,6 +9,7 @@
     "build": "tsc",
     "pretest": "npm run build",
     "test": "cucumber-js",
+    "pretest:ci": "npm run build",
     "test:ci": "cucumber-js --profile ci",
     "format": "prettier --write 'src/**/*.{ts,json}'",
     "lint": "eslint --ext .ts --fix src",

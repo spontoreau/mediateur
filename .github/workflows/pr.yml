@@ -1,0 +1,11 @@
+name: Pull Request
+
+on: 
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+
+jobs:
+  call-shared-workflow:
+    uses: ./.github/workflows/shared-workflow.yml
