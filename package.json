@@ -12,8 +12,7 @@
     "pretest:ci": "npm run build",
     "test:ci": "cucumber-js --profile ci",
     "format": "prettier --write 'src/**/*.{ts,json}'",
-    "lint": "eslint --ext .ts --fix src",
-    "prepare": "husky install"
+    "lint": "eslint --ext .ts --fix src"
   },
   "keywords": [
     "mediator"

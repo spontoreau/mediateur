@@ -1,6 +1,6 @@
 {
   "name": "mediateur",
-  "version": "1.0.0-beta.1",
+  "version": "0.2-beta.20230420163958",
   "description": "A simple and unambitious library to implement the Mediator design pattern",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "test:ci": "cucumber-js --profile ci",
     "format": "prettier --write 'src/**/*.{ts,json}'",
     "lint": "eslint --ext .ts --fix src",
-    "prepare": "husky install"
+    "install": "husky install"
   },
   "keywords": ["mediator"],
   "author": "Sylvain Pontoreau <pontoreau.sylvain@gmail.com>",

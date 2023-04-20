@@ -13,7 +13,7 @@ jobs:
     needs: call-shared-workflow
     runs-on: ubuntu-latest
     outputs:
-      packageVersion: ${{ steps.package_version.outputs.packageVersion }}
+      packageVersion: ${{ steps.package_version_step.outputs.packageVersion }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -21,7 +21,7 @@ jobs:
           node-version: 18.x
           cache: "npm"
       - name: Set package version
-        id: package_version
+        id: package_version_step
         run: |
           GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
           BRANCH_VERSION=$(printf '%s\n' ${GIT_BRANCH//release\//})
@@ -49,11 +49,11 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Set version in package.json
         run: |
-          export PACKAGE_VERSION="${{ env.VERSION }}-beta.${{ github.sha }}" && node -p "JSON.stringify({...require('./package.json'), version: process.env.PACKAGE_VERSION})" > new-package.json
+          export PACKAGE_VERSION="${{ env.VERSION }}" && export DEPLOY_DATE=$(date +'%Y%m%d%H%M%S') && node -p "JSON.stringify({...require('./package.json'), version: process.env.PACKAGE_VERSION + '-beta.' + process.env.DEPLOY_DATE})" > new-package.json
           rm -rf package.json
           mv new-package.json package.json
-          cat package.json
-      # - name: Publish beta version
-      #   run: npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+      - name: Publish beta version
+        run: |
+          npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
