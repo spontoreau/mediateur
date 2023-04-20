@@ -1,0 +1,29 @@
+name: "Release"
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  call-shared-workflow:
+    uses: ./.github/workflows/shared-workflow.yml
+
+  application-version:
+    runs-on: ubuntu-latest
+    outputs:
+      applicationVersion: ${{ steps.app_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+      - name: Set application version
+        id: app_version
+        run: |
+          GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
+          BRANCH_VERSION=$(printf '%s\n' ${GIT_BRANCH//release\//})
+          TAG_VERSION=$(git tag --list | sort -V | tail -n1)
+          VERSION="$(export BRANCH_VERSION="${BRANCH_VERSION}" && TAG_VERSION="${TAG_VERSION}" && node .github/scripts/getVersion.js)"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
