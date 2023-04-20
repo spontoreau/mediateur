@@ -32,6 +32,14 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Pack
+        run: npm pack
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mediateur-package
+          path: mediateur-0.0.0.tgz
+
   test:
     runs-on: ubuntu-latest
 
