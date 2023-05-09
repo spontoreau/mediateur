@@ -6,3 +6,8 @@
 # Mediateur
 
 A simple and unambitious library to implement the Mediator design pattern
+
+## Code of Conduct
+
+This project has adopted the [code of conduct](https://github.com/behaviorland/match/wiki/Code-of-conduct) defined by
+the Contributor Covenant.
