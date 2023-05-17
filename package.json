@@ -1,7 +1,7 @@
 {
   "name": "mediateur",
   "version": "0.0.0",
-  "description": "A simple and unambitious library to implement the Mediator design pattern",
+  "description": "A simple library allowing the implementation of the Mediator design pattern",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
