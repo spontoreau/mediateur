@@ -54,11 +54,11 @@ jobs:
           export PACKAGE_VERSION="${{ env.VERSION }}" && export DEPLOY_DATE=$(date +'%Y%m%d%H%M%S') && node -p "JSON.stringify({...require('./package.json'), version: process.env.PACKAGE_VERSION + '-beta.' + process.env.DEPLOY_DATE})" > new-package.json
           rm -rf package.json
           mv new-package.json package.json
-      # - name: Publish beta version
-      #   run: |
-      #     npm publish --tag beta
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+      - name: Publish beta version
+        run: |
+          npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
   release:
     needs: publish-beta
