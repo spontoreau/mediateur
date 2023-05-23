@@ -3,16 +3,16 @@ import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
 import { UnknownMessageError } from './unknownMessage.error';
 
-const registry = new Map<symbol, MessageHandler>();
+const registry = new Map<string, MessageHandler>();
 
-const register = <TKey extends symbol, TMessage extends Message<TKey>>(
+const register = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
   messageHandler: MessageHandler<TMessage>,
 ) => {
   registry.set(messageType, messageHandler as MessageHandler);
 };
 
-export const getHandler = <TKey extends symbol, TMessage extends Message<TKey>>(
+export const getHandler = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
 ): MessageHandler<TMessage> => {
   if (!registry.has(messageType)) {

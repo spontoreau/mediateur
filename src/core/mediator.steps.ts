@@ -2,9 +2,10 @@ import { Given, Then, When } from '@cucumber/cucumber';
 import { MediateurWorld } from '../mediateur.world';
 import { getHandler, mediator } from './mediator';
 import { UnknownMessageError } from './unknownMessage.error';
+import { randomUUID } from 'crypto';
 
 Given('a message', function (this: MediateurWorld) {
-  this.messageType = Symbol('MESSAGE_TYPE');
+  this.messageType = randomUUID();
   this.message = {
     type: this.messageType,
     data: {},

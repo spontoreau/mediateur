@@ -3,7 +3,7 @@ import { Message } from './core/message';
 import { MessageHandler } from './core/messageHandler';
 
 export class MediateurWorld extends World {
-  #messageType!: symbol;
+  #messageType!: string;
 
   get messageType() {
     if (!this.#messageType) {
@@ -12,7 +12,7 @@ export class MediateurWorld extends World {
     return this.#messageType;
   }
 
-  set messageType(value: symbol) {
+  set messageType(value: string) {
     this.#messageType = value;
   }
 
