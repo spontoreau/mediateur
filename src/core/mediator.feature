@@ -24,3 +24,17 @@ Feature: Send a message
       Given a message
       When sending the message
       Then an error is raised stating that "The message doesn't have any corresponding handler"
+
+    Scenario: A message can not be sent and handled by multiple handlers
+      Given a message
+      And some registred message handlers
+      When sending the message
+      Then an error is raised stating that "Multiple handlers are registred for the message, use publish function instead."
+
+  Rule: A message can be published and handled to execute multiple behaviors of my software
+
+    Scenario: A message can be published and handled to execute multiple behaviors of my software
+      Given a message
+      And some registred message handlers
+      When publishing the message
+      Then the message is handled by each handlers

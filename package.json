@@ -34,6 +34,7 @@
     "@cucumber/pretty-formatter": "^1.0.0",
     "@types/chai": "^4.3.4",
     "@types/node": "^18.15.11",
+    "@types/sinon": "^10.0.15",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "chai": "^4.3.7",
     "eslint": "^8.38.0",
@@ -43,6 +44,7 @@
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.7",
     "rimraf": "^5.0.0",
+    "sinon": "^15.1.0",
     "typescript": "^5.0.4"
   }
 }

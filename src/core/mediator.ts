@@ -1,37 +1,54 @@
 import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
+import { SendToMultipleHandlersError } from './multipleHandlersMessage.error';
 import { UnknownMessageError } from './unknownMessage.error';
 
-const registry = new Map<string, MessageHandler>();
+const registry = new Map<string, Array<MessageHandler>>();
 
 const register = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
   messageHandler: MessageHandler<TMessage>,
 ) => {
-  registry.set(messageType, messageHandler as MessageHandler);
+  const handlers = registry.get(messageType) ?? [];
+  registry.set(messageType, [...handlers, messageHandler as MessageHandler]);
 };
 
-export const getHandler = <TKey extends string, TMessage extends Message<TKey>>(
+export const getHandlers = <
+  TKey extends string,
+  TMessage extends Message<TKey>,
+>(
   messageType: TKey,
-): MessageHandler<TMessage> => {
+): Array<MessageHandler<TMessage>> => {
   if (!registry.has(messageType)) {
     throw new UnknownMessageError();
   }
-  return registry.get(messageType) as MessageHandler<TMessage>;
+  return registry.get(messageType) as Array<MessageHandler<TMessage>>;
 };
 
 const send = async <TMessage extends Message>({
   type,
   data,
 }: TMessage): Promise<MessageResult<TMessage>> => {
-  const handle = getHandler<typeof type, TMessage>(type);
-  return handle(data);
+  const handlers = getHandlers<typeof type, TMessage>(type);
+
+  if (handlers.length > 1) {
+    throw new SendToMultipleHandlersError();
+  }
+
+  return handlers[0](data);
+};
+
+const publish = async <TMessage extends Message>({ type, data }: TMessage) => {
+  const handlers = getHandlers<typeof type, TMessage>(type);
+
+  await Promise.all(handlers.map((handler) => handler(data)));
 };
 
 const mediator = {
   register,
   send,
+  publish,
 };
 
 export { mediator };

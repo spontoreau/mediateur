@@ -42,18 +42,7 @@ export class MediateurWorld extends World {
     this.#handler = value;
   }
 
-  #hasBeenExecuted!: boolean;
-
-  get hasBeenExecuted() {
-    if (!this.#hasBeenExecuted) {
-      throw new Error('HasBeenExecuted is not initialized');
-    }
-    return this.#hasBeenExecuted;
-  }
-
-  set hasBeenExecuted(value: boolean) {
-    this.#hasBeenExecuted = value;
-  }
+  accessor handlers: Array<MessageHandler> = [];
 
   #error!: Error;
 
