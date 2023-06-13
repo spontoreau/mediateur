@@ -1,6 +1,6 @@
 import { World } from '@cucumber/cucumber';
-import { Message } from './core/message';
-import { MessageHandler } from './core/messageHandler';
+import { Message } from '../core/message';
+import { MessageHandler } from '../core/messageHandler';
 
 export class MediateurWorld extends World {
   #messageType!: string;

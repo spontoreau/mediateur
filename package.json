@@ -21,13 +21,7 @@
   "license": "MIT",
   "files": [
     "dist/*",
-    "!/**/*.steps.js",
-    "!/**/*.steps.d.ts",
-    "!/**/*.world.js",
-    "!/**/*.world.d.ts",
-    "!/**/*.world.ts",
-    "!/**/setupTest.js",
-    "!/**/setupTest.d.ts"
+    "!/**/specs/*"
   ],
   "devDependencies": {
     "@cucumber/cucumber": "^9.1.0",

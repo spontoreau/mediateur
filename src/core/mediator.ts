@@ -14,10 +14,7 @@ const register = <TKey extends string, TMessage extends Message<TKey>>(
   registry.set(messageType, [...handlers, messageHandler as MessageHandler]);
 };
 
-export const getHandlers = <
-  TKey extends string,
-  TMessage extends Message<TKey>,
->(
+const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
 ): Array<MessageHandler<TMessage>> => {
   if (!registry.has(messageType)) {
@@ -49,7 +46,7 @@ const mediator = {
   register,
   send,
   publish,
-};
+} as const;
 
 const clear = () => {
   registry = new Map();
