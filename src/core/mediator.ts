@@ -4,7 +4,7 @@ import { MessageResult } from './messageResult';
 import { SendToMultipleHandlersError } from './multipleHandlersMessage.error';
 import { UnknownMessageError } from './unknownMessage.error';
 
-const registry = new Map<string, Array<MessageHandler>>();
+let registry = new Map<string, Array<MessageHandler>>();
 
 const register = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
@@ -51,4 +51,8 @@ const mediator = {
   publish,
 };
 
-export { mediator };
+const clear = () => {
+  registry = new Map();
+};
+
+export { mediator, clear };
