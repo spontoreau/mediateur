@@ -1,7 +1,7 @@
 import { World } from '@cucumber/cucumber';
 import { Message } from '../core/message';
 import { MessageHandler } from '../core/messageHandler';
-import { MessageHandlerMiddleware } from '../core/messageHandlerMiddleware';
+import { Middleware } from '../core/middlewares';
 
 export class MediateurWorld extends World {
   #messageType!: string;
@@ -45,7 +45,7 @@ export class MediateurWorld extends World {
 
   accessor handlers: Array<MessageHandler> = [];
 
-  accessor globalMiddlewares: Array<MessageHandlerMiddleware> = [];
+  accessor globalMiddlewares: Array<Middleware> = [];
 
   #error!: Error;
 

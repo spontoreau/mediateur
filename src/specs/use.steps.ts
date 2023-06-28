@@ -2,16 +2,16 @@ import { Then, When } from '@cucumber/cucumber';
 import { MediateurWorld } from './mediateur.world';
 import { SinonSpy, fake } from 'sinon';
 import { mediator } from '../core/mediator';
-import { MessageHandlerMiddleware } from '../core/messageHandlerMiddleware';
+import { Middleware } from '../core/middlewares';
 
 When('some message handler middlewares', async function (this: MediateurWorld) {
-  const middleware1: MessageHandlerMiddleware = async (event, next) => {
+  const middleware1: Middleware = async (event, next) => {
     await next();
   };
-  const middleware2: MessageHandlerMiddleware = async (event, next) => {
+  const middleware2: Middleware = async (event, next) => {
     await next();
   };
-  const middleware3: MessageHandlerMiddleware = async (event, next) => {
+  const middleware3: Middleware = async (event, next) => {
     await next();
   };
 
