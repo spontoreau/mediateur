@@ -126,6 +126,8 @@ const apply = <TMessage extends Message>(
 
 const clear = () => {
   globalMiddlewares.clear();
+  messageMiddlewares.clear();
+  handlerMiddlewares.clear();
 };
 
 export const middlewares = {
