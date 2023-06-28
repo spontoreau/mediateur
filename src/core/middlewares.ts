@@ -45,7 +45,10 @@ const createChain = <TMessage extends Message>(
 const hasMiddlewares = <TMessage extends Message>(
   messageType: TMessage['type'],
 ) => {
-  return globalMiddlewares.size || messageMiddlewares.get(messageType) || [];
+  const hasGlobalMiddlewares = !!globalMiddlewares.size;
+  const hasMessageMiddlewares = !!(messageMiddlewares.get(messageType) || [])
+    .length;
+  return hasGlobalMiddlewares || hasMessageMiddlewares;
 };
 
 type AddMessageMiddlewaresOptions<TMessage extends Message> = {
