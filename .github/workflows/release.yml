@@ -1,0 +1,113 @@
+name: "Release"
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  call-shared-workflow:
+    uses: ./.github/workflows/shared-workflow.yml
+
+  package-version:
+    needs: call-shared-workflow
+    runs-on: ubuntu-latest
+    outputs:
+      packageVersion: ${{ steps.package_version_step.outputs.packageVersion }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: '0'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+      - name: Set package version
+        id: package_version_step
+        run: |
+          GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
+          BRANCH_VERSION=$(printf '%s\n' ${GIT_BRANCH//release\//})
+          TAG_VERSION=$(git tag --list | sort -V | tail -n1)
+          VERSION="$(export BRANCH_VERSION="${BRANCH_VERSION}" && TAG_VERSION="${TAG_VERSION}" && node .github/scripts/getVersion.js)"
+          echo "${VERSION}"
+          echo "packageVersion=${VERSION}" >> $GITHUB_OUTPUT
+
+  publish-beta:
+    needs: package-version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.package-version.outputs.packageVersion }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: mediateur-package
+      - name: Unpack artifact
+        run: |
+          tar zxvf mediateur-0.0.0.tgz
+          mv ./package/* ./
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: 'https://registry.npmjs.org'
+      - name: Set version in package.json
+        run: |
+          export PACKAGE_VERSION="${{ env.VERSION }}" && export DEPLOY_DATE=$(date +'%Y%m%d%H%M%S') && node -p "JSON.stringify({...require('./package.json'), version: process.env.PACKAGE_VERSION + '-beta.' + process.env.DEPLOY_DATE})" > new-package.json
+          rm -rf package.json
+          mv new-package.json package.json
+      - name: Publish beta version
+        run: |
+          npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+  release:
+    needs: publish-beta
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERSION: ${{ needs.package-version.outputs.packageVersion }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: false
+          default_prerelease_bump: false
+          custom_tag: ${{ env.VERSION }}
+          tag_prefix: ''
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+  publish-latest:
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.package-version.outputs.packageVersion }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: mediateur-package
+      - name: Unpack artifact
+        run: |
+          tar zxvf mediateur-0.0.0.tgz
+          mv ./package/* ./
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: 'https://registry.npmjs.org'
+      - name: Set version in package.json
+        run: |
+          export PACKAGE_VERSION="${{ env.VERSION }}" && node -p "JSON.stringify({...require('./package.json'), version: process.env.PACKAGE_VERSION})" > new-package.json
+          rm -rf package.json
+          mv new-package.json package.json
+      # - name: Publish latest version
+      #   run: |
+      #     npm publish --tag latest
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

@@ -1,9 +1,10 @@
 import { World } from '@cucumber/cucumber';
-import { Message } from './core/message';
-import { MessageHandler } from './core/messageHandler';
+import { Message } from '../core/message';
+import { MessageHandler } from '../core/messageHandler';
+import { Middleware } from '../core/middlewares';
 
 export class MediateurWorld extends World {
-  #messageType!: symbol;
+  #messageType!: string;
 
   get messageType() {
     if (!this.#messageType) {
@@ -12,7 +13,7 @@ export class MediateurWorld extends World {
     return this.#messageType;
   }
 
-  set messageType(value: symbol) {
+  set messageType(value: string) {
     this.#messageType = value;
   }
 
@@ -42,18 +43,10 @@ export class MediateurWorld extends World {
     this.#handler = value;
   }
 
-  #hasBeenExecuted!: boolean;
-
-  get hasBeenExecuted() {
-    if (!this.#hasBeenExecuted) {
-      throw new Error('HasBeenExecuted is not initialized');
-    }
-    return this.#hasBeenExecuted;
-  }
-
-  set hasBeenExecuted(value: boolean) {
-    this.#hasBeenExecuted = value;
-  }
+  accessor handlers: Array<MessageHandler> = [];
+  accessor globalMiddlewares: Array<Middleware> = [];
+  accessor messageMiddlewares: Array<Middleware> = [];
+  accessor handlerMiddlewares: Array<Middleware> = [];
 
   #error!: Error;
 

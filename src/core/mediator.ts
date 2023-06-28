@@ -1,37 +1,66 @@
 import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
-import { UnknownMessageError } from './unknownMessage.error';
+import { SendToMultipleHandlersError } from './errors/multipleHandlersMessage.error';
+import { UnknownMessageError } from './errors/unknownMessage.error';
+import { AddOptions, Middleware, middlewares } from './middlewares';
 
-const registry = new Map<symbol, MessageHandler>();
+const registry = new Map<string, Array<MessageHandler>>();
 
-const register = <TKey extends symbol, TMessage extends Message<TKey>>(
+const register = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
   messageHandler: MessageHandler<TMessage>,
 ) => {
-  registry.set(messageType, messageHandler as MessageHandler);
+  const handlers = registry.get(messageType) ?? [];
+  registry.set(messageType, [...handlers, messageHandler as MessageHandler]);
 };
 
-export const getHandler = <TKey extends symbol, TMessage extends Message<TKey>>(
+const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
-): MessageHandler<TMessage> => {
+): Array<MessageHandler<TMessage>> => {
   if (!registry.has(messageType)) {
     throw new UnknownMessageError();
   }
-  return registry.get(messageType) as MessageHandler<TMessage>;
+
+  const handlers = registry.get(messageType) as Array<MessageHandler<TMessage>>;
+  return handlers.map((h) => middlewares.apply(messageType, h));
 };
 
 const send = async <TMessage extends Message>({
   type,
   data,
 }: TMessage): Promise<MessageResult<TMessage>> => {
-  const handle = getHandler<typeof type, TMessage>(type);
-  return handle(data);
+  const handlers = getHandlers<typeof type, TMessage>(type);
+
+  if (handlers.length > 1) {
+    throw new SendToMultipleHandlersError();
+  }
+
+  return handlers[0](data);
+};
+
+const publish = async <TMessage extends Message>({ type, data }: TMessage) => {
+  const handlers = getHandlers<typeof type, TMessage>(type);
+
+  await Promise.all(handlers.map((handler) => handler(data)));
+};
+
+type UseOptions<TMessage extends Message> = AddOptions<TMessage>;
+
+const use = <TMessage extends Message>(options: UseOptions<TMessage>) => {
+  middlewares.add(options);
 };
 
 const mediator = {
   register,
   send,
+  publish,
+  use,
+} as const;
+
+const clear = () => {
+  registry.clear();
+  middlewares.clear();
 };
 
-export { mediator };
+export { mediator, clear };

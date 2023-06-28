@@ -1,7 +1,7 @@
 {
   "name": "mediateur",
-  "version": "0.1.0",
-  "description": "A simple and unambitious library to implement the Mediator design pattern",
+  "version": "0.0.0",
+  "description": "A simple library allowing the implementation of the Mediator design pattern",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -12,8 +12,7 @@
     "pretest:ci": "npm run build",
     "test:ci": "cucumber-js --profile ci",
     "format": "prettier --write 'src/**/*.{ts,json}'",
-    "lint": "eslint --ext .ts --fix src",
-    "prepare": "husky install"
+    "lint": "eslint --ext .ts --fix src"
   },
   "keywords": [
     "mediator"
@@ -22,19 +21,14 @@
   "license": "MIT",
   "files": [
     "dist/*",
-    "!/**/*.steps.js",
-    "!/**/*.steps.d.ts",
-    "!/**/*.world.js",
-    "!/**/*.world.d.ts",
-    "!/**/*.world.ts",
-    "!/**/setupTest.js",
-    "!/**/setupTest.d.ts"
+    "!/**/specs/*"
   ],
   "devDependencies": {
     "@cucumber/cucumber": "^9.1.0",
     "@cucumber/pretty-formatter": "^1.0.0",
     "@types/chai": "^4.3.4",
     "@types/node": "^18.15.11",
+    "@types/sinon": "^10.0.15",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "chai": "^4.3.7",
     "eslint": "^8.38.0",
@@ -44,6 +38,7 @@
     "lint-staged": "^13.2.1",
     "prettier": "^2.8.7",
     "rimraf": "^5.0.0",
-    "typescript": "^5.0.4"
+    "sinon": "^15.1.0",
+    "typescript": "^5.1.3"
   }
 }

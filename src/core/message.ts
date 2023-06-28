@@ -1,6 +1,6 @@
 export interface Message<
-  TType extends symbol = symbol,
-  TData = Record<string, never>,
+  TType extends string = string,
+  TData = Record<string, unknown>,
   TResult = void,
 > {
   type: TType;
