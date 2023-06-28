@@ -90,6 +90,7 @@ When(
     const fake3 = fake(middleware3);
 
     this.handlerMiddlewares.push(fake1, fake2, fake3);
+
     mediator.use({
       handler: this.handler,
       middlewares: [fake1, fake2, fake3],
