@@ -21,3 +21,11 @@ Feature: Use a global middleware
       When sending the message
       Then the message is handled
       And message handler middlewares dedicated to the message type are executed
+
+    Scenario: Some message handler middlewares can be added for a handler
+      Given a message
+      And a message handler
+      And some message handler middlewares dedicated to a handler
+      When sending the message
+      Then the message is handled
+      And message handler middlewares dedicated to the handler are executed

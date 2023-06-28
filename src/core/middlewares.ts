@@ -9,6 +9,10 @@ export type Middleware<TMessage extends Message = Message> = (
 
 const globalMiddlewares: Set<Middleware> = new Set();
 const messageMiddlewares: Map<string, ReadonlyArray<Middleware>> = new Map();
+const handlerMiddlewares: Map<
+  MessageHandler,
+  ReadonlyArray<Middleware>
+> = new Map();
 
 const createChain = <TMessage extends Message>(
   messageType: Message['type'],
@@ -17,6 +21,7 @@ const createChain = <TMessage extends Message>(
   const middlewares = [
     ...globalMiddlewares,
     ...(messageMiddlewares.get(messageType) ?? []),
+    ...(handlerMiddlewares.get(handler) ?? []),
   ];
 
   const chain = (): MessageHandler<TMessage> => {
@@ -44,15 +49,23 @@ const createChain = <TMessage extends Message>(
 
 const hasMiddlewares = <TMessage extends Message>(
   messageType: TMessage['type'],
+  handler: MessageHandler<TMessage>,
 ) => {
   const hasGlobalMiddlewares = !!globalMiddlewares.size;
   const hasMessageMiddlewares = !!(messageMiddlewares.get(messageType) || [])
     .length;
-  return hasGlobalMiddlewares || hasMessageMiddlewares;
+  const hasHandlerMiddlewares = !!(handlerMiddlewares.get(handler) || [])
+    .length;
+  return hasGlobalMiddlewares || hasMessageMiddlewares || hasHandlerMiddlewares;
 };
 
 type AddMessageMiddlewaresOptions<TMessage extends Message> = {
   messageType: TMessage['type'];
+  middlewares: ReadonlyArray<Middleware<TMessage>>;
+};
+
+type AddHandlerMiddlewaresOptions<TMessage extends Message> = {
+  handler: MessageHandler<TMessage>;
   middlewares: ReadonlyArray<Middleware<TMessage>>;
 };
 
@@ -62,6 +75,7 @@ type AddGlobalMiddlewaresOptions = {
 
 export type AddOptions<TMessage extends Message> =
   | AddMessageMiddlewaresOptions<TMessage>
+  | AddHandlerMiddlewaresOptions<TMessage>
   | AddGlobalMiddlewaresOptions;
 
 const isAddMessageMiddlewaresOptions = <TMessage extends Message>(
@@ -70,11 +84,24 @@ const isAddMessageMiddlewaresOptions = <TMessage extends Message>(
   return typeof (value as any).messageType === 'string';
 };
 
+const isAddHandlerMiddlewaresOptions = <TMessage extends Message>(
+  value: AddOptions<TMessage>,
+): value is AddHandlerMiddlewaresOptions<TMessage> => {
+  return typeof (value as any).handler === 'function';
+};
+
 const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
   if (isAddMessageMiddlewaresOptions(options)) {
     const middlewares = messageMiddlewares.get(options.messageType) ?? [];
 
     messageMiddlewares.set(options.messageType, [
+      ...middlewares,
+      ...(options.middlewares as ReadonlyArray<Middleware>),
+    ]);
+  } else if (isAddHandlerMiddlewaresOptions(options)) {
+    const middlewares = handlerMiddlewares.get(options.handler) ?? [];
+
+    handlerMiddlewares.set(options.handler, [
       ...middlewares,
       ...(options.middlewares as ReadonlyArray<Middleware>),
     ]);
@@ -89,7 +116,7 @@ const apply = <TMessage extends Message>(
   messageType: TMessage['type'],
   handler: MessageHandler<TMessage>,
 ) => {
-  if (!hasMiddlewares(messageType)) {
+  if (!hasMiddlewares(messageType, handler)) {
     return handler;
   }
 

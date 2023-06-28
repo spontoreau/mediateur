@@ -71,3 +71,37 @@ Then(
     }
   },
 );
+
+When(
+  'some message handler middlewares dedicated to a handler',
+  async function (this: MediateurWorld) {
+    const middleware1: Middleware = async (event, next) => {
+      await next();
+    };
+    const middleware2: Middleware = async (event, next) => {
+      await next();
+    };
+    const middleware3: Middleware = async (event, next) => {
+      await next();
+    };
+
+    const fake1 = fake(middleware1);
+    const fake2 = fake(middleware2);
+    const fake3 = fake(middleware3);
+
+    this.handlerMiddlewares.push(fake1, fake2, fake3);
+    mediator.use({
+      handler: this.handler,
+      middlewares: [fake1, fake2, fake3],
+    });
+  },
+);
+
+Then(
+  'message handler middlewares dedicated to the handler are executed',
+  function (this: MediateurWorld) {
+    for (const middleware of this.handlerMiddlewares) {
+      (middleware as SinonSpy).calledOnce.should.be.true;
+    }
+  },
+);
