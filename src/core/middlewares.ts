@@ -2,14 +2,15 @@ import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
 
-export type AddOption = {
-  middlewares: ReadonlyArray<Middleware>;
-};
-
 export type Middleware<TMessage extends Message = Message> = (
   message: TMessage,
   next: () => Promise<MessageResult<TMessage>>,
 ) => Promise<MessageResult<TMessage>>;
+
+export type AddOption = {
+  type: 'global';
+  middlewares: ReadonlyArray<Middleware>;
+};
 
 const global: Set<Middleware> = new Set();
 
@@ -50,8 +51,10 @@ const hasMiddlewares = <TMessage extends Message>(
 };
 
 const add = (options: AddOption) => {
-  for (const middleware of options.middlewares) {
-    global.add(middleware);
+  if (options.type === 'global') {
+    for (const middleware of options.middlewares) {
+      global.add(middleware);
+    }
   }
 };
 

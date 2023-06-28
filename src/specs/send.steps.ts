@@ -2,8 +2,8 @@ import { Then, When } from '@cucumber/cucumber';
 import { SinonSpy } from 'sinon';
 import { MediateurWorld } from './mediateur.world';
 import { mediator } from '../core/mediator';
-import { UnknownMessageError } from '../core/unknownMessage.error';
-import { SendToMultipleHandlersError } from '../core/multipleHandlersMessage.error';
+import { SendToMultipleHandlersError } from '../core/errors/multipleHandlersMessage.error';
+import { UnknownMessageError } from '../core/errors/unknownMessage.error';
 
 When('sending the message', async function (this: MediateurWorld) {
   try {

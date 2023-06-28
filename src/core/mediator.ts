@@ -1,9 +1,9 @@
 import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
+import { SendToMultipleHandlersError } from './errors/multipleHandlersMessage.error';
+import { UnknownMessageError } from './errors/unknownMessage.error';
 import { Middleware, middlewares } from './middlewares';
-import { SendToMultipleHandlersError } from './multipleHandlersMessage.error';
-import { UnknownMessageError } from './unknownMessage.error';
 
 const registry = new Map<string, Array<MessageHandler>>();
 
@@ -23,7 +23,6 @@ const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
   }
 
   const handlers = registry.get(messageType) as Array<MessageHandler<TMessage>>;
-
   return handlers.map((h) => middlewares.apply(messageType, h));
 };
 
@@ -48,6 +47,7 @@ const publish = async <TMessage extends Message>({ type, data }: TMessage) => {
 
 const use = (...globalMiddlewares: ReadonlyArray<Middleware>) => {
   middlewares.add({
+    type: 'global',
     middlewares: globalMiddlewares,
   });
 };
