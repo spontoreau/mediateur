@@ -3,7 +3,7 @@ import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
 import { SendToMultipleHandlersError } from './errors/multipleHandlersMessage.error';
 import { UnknownMessageError } from './errors/unknownMessage.error';
-import { Middleware, middlewares } from './middlewares';
+import { AddOptions, Middleware, middlewares } from './middlewares';
 
 const registry = new Map<string, Array<MessageHandler>>();
 
@@ -45,11 +45,10 @@ const publish = async <TMessage extends Message>({ type, data }: TMessage) => {
   await Promise.all(handlers.map((handler) => handler(data)));
 };
 
-const use = (...globalMiddlewares: ReadonlyArray<Middleware>) => {
-  middlewares.add({
-    type: 'global',
-    middlewares: globalMiddlewares,
-  });
+type UseOptions<TMessage extends Message> = AddOptions<TMessage>;
+
+const use = <TMessage extends Message>(options: UseOptions<TMessage>) => {
+  middlewares.add(options);
 };
 
 const mediator = {

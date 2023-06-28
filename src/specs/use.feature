@@ -9,7 +9,15 @@ Feature: Use a global middleware
     Scenario: Some message handler middlewares can be added globally
       Given a message
       And a message handler
-      And some message handler middlewares
+      And some message global handler middlewares
       When sending the message
       Then the message is handled
-      And message handler middlewares are executed
+      And message handler global middlewares are executed
+
+    Scenario: Some message handler middlewares can be added for a message type
+      Given a message
+      And a message handler
+      And some message handler middlewares dedicated to a message type
+      When sending the message
+      Then the message is handled
+      And message handler middlewares dedicated to the message type are executed

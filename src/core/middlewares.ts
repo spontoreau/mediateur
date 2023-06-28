@@ -7,18 +7,17 @@ export type Middleware<TMessage extends Message = Message> = (
   next: () => Promise<MessageResult<TMessage>>,
 ) => Promise<MessageResult<TMessage>>;
 
-export type AddOption = {
-  type: 'global';
-  middlewares: ReadonlyArray<Middleware>;
-};
-
-const global: Set<Middleware> = new Set();
+const globalMiddlewares: Set<Middleware> = new Set();
+const messageMiddlewares: Map<string, ReadonlyArray<Middleware>> = new Map();
 
 const createChain = <TMessage extends Message>(
   messageType: Message['type'],
   handler: MessageHandler<TMessage>,
 ): MessageHandler<TMessage> => {
-  const middlewares = Array.from(global);
+  const middlewares = [
+    ...globalMiddlewares,
+    ...(messageMiddlewares.get(messageType) ?? []),
+  ];
 
   const chain = (): MessageHandler<TMessage> => {
     const middlewareToExecute = middlewares.shift() as
@@ -45,15 +44,40 @@ const createChain = <TMessage extends Message>(
 
 const hasMiddlewares = <TMessage extends Message>(
   messageType: TMessage['type'],
-  handler: MessageHandler<TMessage>,
 ) => {
-  return !!global.size;
+  return globalMiddlewares.size || messageMiddlewares.get(messageType) || [];
 };
 
-const add = (options: AddOption) => {
-  if (options.type === 'global') {
+type AddMessageMiddlewaresOptions<TMessage extends Message> = {
+  messageType: TMessage['type'];
+  middlewares: ReadonlyArray<Middleware<TMessage>>;
+};
+
+type AddGlobalMiddlewaresOptions = {
+  middlewares: ReadonlyArray<Middleware>;
+};
+
+export type AddOptions<TMessage extends Message> =
+  | AddMessageMiddlewaresOptions<TMessage>
+  | AddGlobalMiddlewaresOptions;
+
+const isAddMessageMiddlewaresOptions = <TMessage extends Message>(
+  value: AddOptions<TMessage>,
+): value is AddMessageMiddlewaresOptions<TMessage> => {
+  return typeof (value as any).messageType === 'string';
+};
+
+const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
+  if (isAddMessageMiddlewaresOptions(options)) {
+    const middlewares = messageMiddlewares.get(options.messageType) ?? [];
+
+    messageMiddlewares.set(options.messageType, [
+      ...middlewares,
+      ...(options.middlewares as ReadonlyArray<Middleware>),
+    ]);
+  } else {
     for (const middleware of options.middlewares) {
-      global.add(middleware);
+      globalMiddlewares.add(middleware);
     }
   }
 };
@@ -62,7 +86,7 @@ const apply = <TMessage extends Message>(
   messageType: TMessage['type'],
   handler: MessageHandler<TMessage>,
 ) => {
-  if (!hasMiddlewares(messageType, handler)) {
+  if (!hasMiddlewares(messageType)) {
     return handler;
   }
 
@@ -71,7 +95,7 @@ const apply = <TMessage extends Message>(
 };
 
 const clear = () => {
-  global.clear();
+  globalMiddlewares.clear();
 };
 
 export const middlewares = {

@@ -44,8 +44,8 @@ export class MediateurWorld extends World {
   }
 
   accessor handlers: Array<MessageHandler> = [];
-
   accessor globalMiddlewares: Array<Middleware> = [];
+  accessor messageMiddlewares: Array<Middleware> = [];
 
   #error!: Error;
 
