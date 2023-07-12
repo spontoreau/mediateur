@@ -60,6 +60,30 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
+  release:
+    needs: [publish-beta, package-version]
+    environment: production
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.package-version.outputs.packageVersion }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: false
+          default_prerelease_bump: false
+          custom_tag: ${{ env.VERSION }}
+          tag_prefix: ''
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
   publish-latest:
     needs: [release, package-version]
     runs-on: ubuntu-latest
@@ -87,27 +111,3 @@ jobs:
           npm publish --tag latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-
-  release:
-    needs: [publish-beta, package-version]
-    environment: production
-    runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.package-version.outputs.packageVersion }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: false
-          default_prerelease_bump: false
-          custom_tag: ${{ env.VERSION }}
-          tag_prefix: ''
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
