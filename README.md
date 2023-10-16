@@ -1,11 +1,15 @@
 [![GitHub license](https://img.shields.io/github/license/spontoreau/mediateur)](LICENCE)
 [![Continuous Integration](https://github.com/spontoreau/mediateur/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spontoreau/mediateur/actions/workflows/ci.yml)
-[![CucumberReports: Mediateur](https://messages.cucumber.io/api/report-collections/945d13a2-7fb6-4261-807e-b75511ae98e7/badge)](https://reports.cucumber.io/report-collections/945d13a2-7fb6-4261-807e-b75511ae98e7)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg)](https://gitmoji.dev)
 
-# Mediateur
+# mediateur
 
 A simple and unambitious library to implement the Mediator design pattern
+
+## Contributing
+
+Before you contribute, please take a few minutes to read the
+[contribution guidelines](https://github.com/spontoreau/mediateur/wiki/Contribution-guidelines).
 
 ## Code of Conduct
 
