@@ -8,9 +8,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "pretest": "npm run build",
-    "test": "cucumber-js",
-    "pretest:ci": "npm run build",
-    "test:ci": "cucumber-js --profile ci",
+    "test": "node --test",
     "format": "prettier --write 'src/**/*.{ts,json}'",
     "lint": "eslint --ext .ts --fix src"
   },
@@ -21,11 +19,9 @@
   "license": "MIT",
   "files": [
     "dist/*",
-    "!/**/specs/*"
+    "!/**/*.test.*"
   ],
   "devDependencies": {
-    "@cucumber/cucumber": "^9.1.0",
-    "@cucumber/pretty-formatter": "^1.0.0",
     "@types/chai": "^4.3.4",
     "@types/node": "^18.15.11",
     "@types/sinon": "^10.0.15",
