@@ -28,7 +28,7 @@ jobs:
           GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
           BRANCH_VERSION=$(printf '%s\n' ${GIT_BRANCH//release\//})
           TAG_VERSION=$(git tag --list | sort -V | tail -n1)
-          VERSION="$(export BRANCH_VERSION="${BRANCH_VERSION}" && TAG_VERSION="${TAG_VERSION}" && node .github/scripts/getVersion.js)"
+          VERSION="$(export BRANCH_VERSION="${BRANCH_VERSION}" && export TAG_VERSION="${TAG_VERSION}" && node .github/scripts/getVersion.js)"
           echo "${VERSION}"
           echo "packageVersion=${VERSION}" >> $GITHUB_OUTPUT
 
