@@ -1,7 +1,7 @@
 import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
-import { SendToMultipleHandlersError } from './errors/multipleHandlersMessage.error';
+import { MultipleHandlersError } from './errors/multipleHandlers.error';
 import { UnknownMessageError } from './errors/unknownMessage.error';
 import { AddOptions, Middleware, middlewares } from './middlewares';
 
@@ -19,7 +19,7 @@ const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
 ): Array<MessageHandler<TMessage>> => {
   if (!registry.has(messageType)) {
-    throw new UnknownMessageError();
+    throw new UnknownMessageError(messageType);
   }
 
   const handlers = registry.get(messageType) as Array<MessageHandler<TMessage>>;
@@ -33,7 +33,7 @@ const send = async <TMessage extends Message>({
   const handlers = getHandlers<typeof type, TMessage>(type);
 
   if (handlers.length > 1) {
-    throw new SendToMultipleHandlersError();
+    throw new MultipleHandlersError(type);
   }
 
   return handlers[0](data);
