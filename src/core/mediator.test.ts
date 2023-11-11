@@ -4,7 +4,7 @@ import { Message } from './message';
 import { MessageHandler } from './messageHandler';
 import { clear, mediator } from './mediator';
 import { UnknownMessageError } from './errors/unknownMessage.error';
-import { SendToMultipleHandlersError } from './errors/multipleHandlersMessage.error';
+import { MultipleHandlersError } from './errors/multipleHandlers.error';
 import { should } from 'chai';
 import { Middleware } from './middlewares';
 
@@ -87,6 +87,9 @@ describe('mediator.send', () => {
 
     // Assert
     actual.should.be.instanceOf(UnknownMessageError);
+    actual.message.should.be.equal(
+      `The message doesn't have any corresponding handler (MESSAGE_TYPE: CREATE_PERSON)`,
+    );
   });
 
   it('should throw error when sending a message through the mediator that can be handled with multiple handlers', async () => {
@@ -126,7 +129,10 @@ describe('mediator.send', () => {
     }
 
     // Assert
-    actual.should.be.instanceOf(SendToMultipleHandlersError);
+    actual.should.be.instanceOf(MultipleHandlersError);
+    actual.message.should.be.equal(
+      `Multiple handlers are registred, use publish function instead (MESSAGE_TYPE: CREATE_PERSON)`,
+    );
   });
 });
 
@@ -213,6 +219,9 @@ describe('mediator.publish', () => {
 
     // Assert
     actual.should.be.instanceOf(UnknownMessageError);
+    actual.message.should.be.equal(
+      `The message doesn't have any corresponding handler (MESSAGE_TYPE: CREATE_PERSON)`,
+    );
   });
 });
 
