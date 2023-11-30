@@ -14,16 +14,6 @@ const handlerMiddlewares: Map<
   ReadonlyArray<Middleware>
 > = new Map();
 
-type CacheItem = {
-  key: {
-    messageType: string;
-    handler: MessageHandler;
-  };
-  value: MessageHandler;
-};
-
-const cache: Array<CacheItem> = [];
-
 const createChain = <TMessage extends Message>(
   messageType: Message['type'],
   handler: MessageHandler<TMessage>,
@@ -103,13 +93,6 @@ const isAddHandlerMiddlewaresOptions = <TMessage extends Message>(
 
 const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
   if (isAddMessageMiddlewaresOptions(options)) {
-    const cacheItems = cache.filter(
-      (item) => item.key.messageType === options.messageType,
-    );
-    for (const cacheItem of cacheItems) {
-      cache.splice(cache.indexOf(cacheItem), 1);
-    }
-
     const middlewares = messageMiddlewares.get(options.messageType) ?? [];
 
     messageMiddlewares.set(options.messageType, [
@@ -117,14 +100,6 @@ const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
       ...(options.middlewares as ReadonlyArray<Middleware>),
     ]);
   } else if (isAddHandlerMiddlewaresOptions(options)) {
-    const cacheItem = cache.find(
-      (item) => item.key.handler === options.handler,
-    );
-
-    if (cacheItem) {
-      cache.splice(cache.indexOf(cacheItem), 1);
-    }
-
     const middlewares = handlerMiddlewares.get(options.handler) ?? [];
 
     handlerMiddlewares.set(options.handler, [
@@ -132,9 +107,6 @@ const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
       ...(options.middlewares as ReadonlyArray<Middleware>),
     ]);
   } else {
-    if (cache.length > 0) {
-      cache.splice(0, cache.length);
-    }
     for (const middleware of options.middlewares) {
       globalMiddlewares.add(middleware);
     }
@@ -149,21 +121,7 @@ const apply = <TMessage extends Message>(
     return handler;
   }
 
-  const cacheItem = cache.find((item) => item.key.handler === handler);
-
-  if (cacheItem) {
-    return cacheItem.value;
-  }
-
   const handlerWithMiddlewareChain = createChain(messageType, handler);
-
-  cache.push({
-    key: {
-      handler,
-      messageType,
-    },
-    value: handlerWithMiddlewareChain,
-  });
 
   return handlerWithMiddlewareChain;
 };
@@ -172,7 +130,6 @@ const clear = () => {
   globalMiddlewares.clear();
   messageMiddlewares.clear();
   handlerMiddlewares.clear();
-  cache.splice(0, cache.length);
 };
 
 export const middlewares = {
