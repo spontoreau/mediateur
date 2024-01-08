@@ -326,6 +326,69 @@ describe('mediator.use', () => {
     middleware2.called.should.be.false;
   });
 
+  it('should execute a middleware dedicated to some message types when sending it through the mediator', async () => {
+    // Arrange
+    const createPersonMessageType = 'CREATE_PERSON';
+    type CreatePersonMessageType = typeof createPersonMessageType;
+    type CreatePersonMessage = Message<
+      CreatePersonMessageType,
+      {
+        firstName: string;
+        lastName: string;
+        email: string;
+        age: number;
+      }
+    >;
+
+    const anotherMessageType = 'ANOTHER_MESSAGE_TYPE';
+    type AnotherMessageType = typeof anotherMessageType;
+    type AnotherMessage = Message<AnotherMessageType, {}>;
+
+    const createPersonMessageHandler: MessageHandler<CreatePersonMessage> =
+      fake();
+    const anotherMessageHandler: MessageHandler<AnotherMessage> = fake();
+
+    const middlewareImplementation: Middleware = async (message, next) => {
+      await next();
+    };
+    const middleware: Middleware<CreatePersonMessage | AnotherMessage> = fake(
+      middlewareImplementation,
+    );
+
+    mediator.use({
+      messageType: ['CREATE_PERSON', 'ANOTHER_MESSAGE_TYPE'],
+      middlewares: [middleware],
+    });
+
+    mediator.register(createPersonMessageType, createPersonMessageHandler);
+    mediator.register(anotherMessageType, anotherMessageHandler);
+
+    // Act
+    const message1: CreatePersonMessage = {
+      type: createPersonMessageType,
+      data: {
+        firstName: 'Anthony',
+        lastName: 'Houston',
+        email: 'anthony.houston@some-email.com',
+        age: 30,
+      },
+    };
+
+    await mediator.send<CreatePersonMessage>(message1);
+
+    const message2 = {
+      type: anotherMessageType,
+      data: {},
+    };
+
+    await mediator.send(message2);
+
+    // Assert
+    (middleware as SinonSpy).callCount.should.be.equal(2);
+    (middleware as SinonSpy).getCall(0).args[0].should.be.deep.equal(message1);
+    (middleware as SinonSpy).getCall(1).args[0].should.be.deep.equal(message2);
+  });
+
   it('should execute middlewares dedicated to a message handler when sending it through the mediator', async () => {
     // Arrange
     const type = 'CREATE_PERSON';
