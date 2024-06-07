@@ -52,6 +52,24 @@ describe('mediator.send', () => {
     (handler as SinonSpy).calledOnceWith([expected]);
   });
 
+  it('should return registered message types when getting message types from mediator', async () => {
+    // Arrange
+    const type1 = 'TYPE_1';
+    const type2 = 'TYPE_2';
+    const type3 = 'TYPE_3';
+    mediator.register(type3, async () => {});
+    mediator.register(type2, async () => {});
+    mediator.register(type1, async () => {});
+
+    // Act
+    const actual = mediator.getMessageTypes();
+
+    const expected = [type1, type2, type3];
+
+    // Assert
+    actual.should.be.deep.equal(expected);
+  });
+
   it('should throw error when sending an unknown message through the mediator', async () => {
     // Arrange
     const type = 'CREATE_PERSON';
