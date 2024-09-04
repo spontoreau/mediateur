@@ -51,11 +51,14 @@ const use = <TMessage extends Message>(options: UseOptions<TMessage>) => {
   middlewares.add(options);
 };
 
+const getMessageTypes = () => [...registry.keys()].sort();
+
 const mediator = {
   register,
   send,
   publish,
   use,
+  getMessageTypes,
 } as const;
 
 const clear = () => {
