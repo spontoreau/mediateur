@@ -5,7 +5,7 @@ import { MessageHandler } from './messageHandler';
 import { clear, mediator } from './mediator';
 import { UnknownMessageError } from './errors/unknownMessage.error';
 import { MultipleHandlersError } from './errors/multipleHandlers.error';
-import { should } from 'chai';
+import { expect, should } from 'chai';
 import { Middleware } from './middlewares';
 
 should();
@@ -68,6 +68,46 @@ describe('mediator.send', () => {
 
     // Assert
     actual.should.be.deep.equal(expected);
+  });
+
+  it('should return registered metadata when getting metadata from mediator', async () => {
+    // Arrange
+    const type1 = 'TYPE_1';
+    const type2 = 'TYPE_2';
+    mediator.register(type2, async () => {}, { meta1Prop: 'meta1value' });
+    mediator.register(type2, async () => {}, { meta2Prop: 'meta2value' });
+    mediator.register(type1, async () => {}, { meta3Prop: 'meta3value' });
+
+    // Act
+    const actualMessageMetadata = mediator.getMetadata(type2);
+
+    const expectedMessageMetadata = {
+      meta1Prop: 'meta1value',
+      meta2Prop: 'meta2value',
+    };
+
+    // Assert
+    expect(actualMessageMetadata).to.be.deep.equal(expectedMessageMetadata);
+
+    const actualAllMetadata = mediator.getAllMetadata();
+
+    const expectedAllMetadata = [
+      {
+        type: type2,
+        metadata: {
+          meta1Prop: 'meta1value',
+          meta2Prop: 'meta2value',
+        },
+      },
+      {
+        type: type1,
+        metadata: {
+          meta3Prop: 'meta3value',
+        },
+      },
+    ];
+
+    actualAllMetadata.should.deep.equal(expectedAllMetadata);
   });
 
   it('should throw error when sending an unknown message through the mediator', async () => {

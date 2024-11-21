@@ -21,7 +21,7 @@ const createChain = <TMessage extends Message>(
   const middlewares = [
     ...globalMiddlewares,
     ...(messageMiddlewares.get(messageType) ?? []),
-    ...(handlerMiddlewares.get(handler) ?? []),
+    ...(handlerMiddlewares.get(handler as MessageHandler) ?? []),
   ];
 
   const chain = (): MessageHandler<TMessage> => {
@@ -54,8 +54,9 @@ const hasMiddlewares = <TMessage extends Message>(
   const hasGlobalMiddlewares = !!globalMiddlewares.size;
   const hasMessageMiddlewares = !!(messageMiddlewares.get(messageType) || [])
     .length;
-  const hasHandlerMiddlewares = !!(handlerMiddlewares.get(handler) || [])
-    .length;
+  const hasHandlerMiddlewares = !!(
+    handlerMiddlewares.get(handler as MessageHandler) || []
+  ).length;
 
   return hasGlobalMiddlewares || hasMessageMiddlewares || hasHandlerMiddlewares;
 };
@@ -105,9 +106,10 @@ const add = <TMessage extends Message>(options: AddOptions<TMessage>) => {
       ]);
     }
   } else if (isAddHandlerMiddlewaresOptions(options)) {
-    const middlewares = handlerMiddlewares.get(options.handler) ?? [];
+    const middlewares =
+      handlerMiddlewares.get(options.handler as MessageHandler) ?? [];
 
-    handlerMiddlewares.set(options.handler, [
+    handlerMiddlewares.set(options.handler as MessageHandler, [
       ...middlewares,
       ...(options.middlewares as ReadonlyArray<Middleware>),
     ]);
