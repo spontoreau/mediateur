@@ -1,4 +1,3 @@
 {
-  "*.{js,ts,json}": "prettier --write --ignore-unknown",
-  "*.{js,ts}": "eslint --fix"
+  "*.{js,ts,json}": "biome check --write"
 }
