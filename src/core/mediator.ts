@@ -3,16 +3,24 @@ import { MessageHandler } from './messageHandler';
 import { MessageResult } from './messageResult';
 import { MultipleHandlersError } from './errors/multipleHandlers.error';
 import { UnknownMessageError } from './errors/unknownMessage.error';
-import { AddOptions, Middleware, middlewares } from './middlewares';
+import { AddOptions, middlewares } from './middlewares';
+import { Metadata } from './metadata';
 
 const registry = new Map<string, Array<MessageHandler>>();
+const metadatas = new Map<string, Metadata>();
 
 const register = <TKey extends string, TMessage extends Message<TKey>>(
   messageType: TKey,
   messageHandler: MessageHandler<TMessage>,
+  metadata: Metadata = {},
 ) => {
   const handlers = registry.get(messageType) ?? [];
   registry.set(messageType, [...handlers, messageHandler as MessageHandler]);
+  const meta = metadatas.get(messageType);
+  metadatas.set(messageType, {
+    ...meta,
+    ...metadata,
+  });
 };
 
 const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
@@ -23,7 +31,7 @@ const getHandlers = <TKey extends string, TMessage extends Message<TKey>>(
   }
 
   const handlers = registry.get(messageType) as Array<MessageHandler<TMessage>>;
-  return handlers.map((h) => middlewares.apply(messageType, h));
+  return handlers.map((handler) => middlewares.apply(messageType, handler));
 };
 
 const send = async <TMessage extends Message>({
@@ -51,7 +59,10 @@ const use = <TMessage extends Message>(options: UseOptions<TMessage>) => {
   middlewares.add(options);
 };
 
-const getMessageTypes = () => [...registry.keys()].sort();
+const getMessageTypes = () => Array.from(registry.keys()).sort();
+const getMetadata = (type: string) => metadatas.get(type);
+const getAllMetadata = () =>
+  Array.from(metadatas.entries(), ([key, value]) => ({ type: key, metadata: value }));
 
 const mediator = {
   register,
@@ -59,10 +70,13 @@ const mediator = {
   publish,
   use,
   getMessageTypes,
+  getMetadata,
+  getAllMetadata,
 } as const;
 
 const clear = () => {
   registry.clear();
+  metadatas.clear();
   middlewares.clear();
 };
 
