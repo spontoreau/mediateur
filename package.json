@@ -2,8 +2,20 @@
   "name": "mediateur",
   "version": "0.0.0",
   "description": "A simple library allowing the implementation of the Mediator design pattern",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*",
+    "!/**/*.test.*"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
@@ -17,10 +29,14 @@
   ],
   "author": "Sylvain Pontoreau <pontoreau.sylvain@gmail.com>",
   "license": "MIT",
-  "files": [
-    "dist/*",
-    "!/**/*.test.*"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spontoreau/mediateur.git"
+  },
+  "bugs": {
+    "url": "https://github.com/spontoreau/mediateur/issues"
+  },
+  "homepage": "https://github.com/spontoreau/mediateur",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/chai": "^4.3.4",
