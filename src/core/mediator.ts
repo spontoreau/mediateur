@@ -1,10 +1,10 @@
-import type { Message } from "./message";
-import type { MessageHandler } from "./messageHandler";
-import type { MessageResult } from "./messageResult";
-import { MultipleHandlersError } from "./errors/multipleHandlers.error";
-import { UnknownMessageError } from "./errors/unknownMessage.error";
-import { type AddOptions, middlewares } from "./middlewares";
-import type { Metadata } from "./metadata";
+import type { Message } from "./message.js";
+import type { MessageHandler } from "./messageHandler.js";
+import type { MessageResult } from "./messageResult.js";
+import { MultipleHandlersError } from "./errors/multipleHandlers.error.js";
+import { UnknownMessageError } from "./errors/unknownMessage.error.js";
+import { type AddOptions, middlewares } from "./middlewares.js";
+import type { Metadata } from "./metadata.js";
 
 const registry = new Map<string, Array<MessageHandler>>();
 const metadatas = new Map<string, Metadata>();

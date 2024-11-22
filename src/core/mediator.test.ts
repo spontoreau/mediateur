@@ -1,12 +1,12 @@
 import { afterEach, describe, it } from "node:test";
 import { type SinonSpy, fake } from "sinon";
-import type { Message } from "./message";
-import type { MessageHandler } from "./messageHandler";
-import { clear, mediator } from "./mediator";
-import { UnknownMessageError } from "./errors/unknownMessage.error";
-import { MultipleHandlersError } from "./errors/multipleHandlers.error";
+import type { Message } from "./message.js";
+import type { MessageHandler } from "./messageHandler.js";
+import { clear, mediator } from "./mediator.js";
+import { UnknownMessageError } from "./errors/unknownMessage.error.js";
+import { MultipleHandlersError } from "./errors/multipleHandlers.error.js";
 import { expect, should } from "chai";
-import type { Middleware } from "./middlewares";
+import type { Middleware } from "./middlewares.js";
 
 should();
 

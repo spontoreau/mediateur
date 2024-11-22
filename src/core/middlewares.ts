@@ -1,6 +1,6 @@
-import type { Message } from "./message";
-import type { MessageHandler } from "./messageHandler";
-import type { MessageResult } from "./messageResult";
+import type { Message } from "./message.js";
+import type { MessageHandler } from "./messageHandler.js";
+import type { MessageResult } from "./messageResult.js";
 
 export type Middleware<TMessage extends Message = Message> = (
 	message: TMessage,
