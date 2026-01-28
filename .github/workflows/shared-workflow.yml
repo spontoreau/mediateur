@@ -38,12 +38,13 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
+      - name: 🛠️ Setup PNPM
+        uses: pnpm/action-setup@v4
+
       - name: 📦 Install depensdencies
         run: |
             pnpm install
-      
-      - name: 🛠️ Setup PNPM
-        uses: pnpm/action-setup@v4
+
       - name: Build
         run: pnpm run build
 
@@ -67,12 +68,13 @@ jobs:
         with:
           node-version-file: ".nvmrc"
       
+      - name: 🛠️ Setup PNPM
+        uses: pnpm/action-setup@v4
+
       - name: 📦 Install depensdencies
         run: |
             pnpm install
-      
-      - name: 🛠️ Setup PNPM
-        uses: pnpm/action-setup@v4
+            
       - name: Build
         run: pnpm run build
 
